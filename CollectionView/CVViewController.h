@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface CVViewController : UIViewController
+@interface CVViewController : UIViewController <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 
 @end

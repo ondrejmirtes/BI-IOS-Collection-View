@@ -10,20 +10,54 @@
 
 @interface CVViewController ()
 
+@property (nonatomic, strong) NSMutableDictionary* cache;
+
 @end
 
 @implementation CVViewController
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+@synthesize cache = _cache;
+
+- (NSMutableDictionary*) cache {
+	if (_cache == nil) {
+		_cache = [NSMutableDictionary dictionary];
+	}
+	
+	return _cache;
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (NSInteger)collectionView:(UICollectionView *)view numberOfItemsInSection:(NSInteger)section {
+    return 32;
+}
+
+- (NSInteger) fibonacciNumber:(NSInteger)num {
+	if (num <= 1) {
+		return 1;
+	}
+	return [self fibonacciNumber:(num - 1)] + [self fibonacciNumber:(num - 2)];
+}
+
+- (NSInteger) fibonacciNumberFromCache:(NSInteger)num {
+	NSNumber* key = [NSNumber numberWithInt:num];
+	if ([self.cache objectForKey:key] == nil) {
+		NSNumber* result = [NSNumber numberWithInt:[self fibonacciNumber:num]];
+		[self.cache setObject:result forKey:key];
+	}
+	return [[self.cache objectForKey:key] intValue];
+}
+
+- (NSInteger)numberOfSectionsInCollectionView: (UICollectionView *)collectionView {
+	return 1;
+}
+
+- (UICollectionViewCell *)collectionView:(UICollectionView *)cv cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+	UICollectionViewCell *cell = [cv dequeueReusableCellWithReuseIdentifier:@"FibonacciCell" forIndexPath:indexPath];
+    cell.backgroundColor = [UIColor whiteColor];
+	
+	UILabel* label = (UILabel*) [cell viewWithTag:1];
+	label.text = [NSString stringWithFormat:@"%d", [self fibonacciNumberFromCache:indexPath.row]];
+	
+    return cell;
 }
 
 @end
